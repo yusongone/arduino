@@ -1,0 +1,14 @@
+{
+  "name": "glidejs",
+  "homepage": "https://github.com/jedrzejchalubek/Glide.js",
+  "_release": "a3d7801825",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "a3d78018250a29d3f2a4c7de0dd24463c065a2c2"
+  },
+  "_source": "git://github.com/jedrzejchalubek/Glide.js.git",
+  "_target": "*",
+  "_originalSource": "glidejs",
+  "_direct": true
+}

@@ -16,7 +16,7 @@ serialPort.open(function () {
     console.log('data received: ' + data);
   });
 
-  //var hex_command=getCommand("$ M > 100 ");
+ // var hex_command=getCommand("$ M > 100 ");
   var hex_command=new Buffer([0x24,0x4D,0x3C,0x00,0x64,0x64]);
   console.log(hex_command);
   serialPort.write(hex_command, function(err, results) {

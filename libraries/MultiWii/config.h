@@ -57,14 +57,15 @@
     /* Set the minimum throttle command sent to the ESC (Electronic Speed Controller)
        This is the minimum value that allow motors to run at a idle speed  */
     //#define MINTHROTTLE 1300 // for Turnigy Plush ESCs 10A
-    //#define MINTHROTTLE 1120 // for Super Simple ESCs 10A
+    #define MINTHROTTLE 1120 // for Super Simple ESCs 10A
     //#define MINTHROTTLE 1064 // special ESC (simonk)
     //#define MINTHROTTLE 1050 // for brushed ESCs like ladybird
-    #define MINTHROTTLE 1150 // (*) (**)
+    //#define MINTHROTTLE 1150 // (*) (**)
 
   /****************************    Motor maxthrottle    *******************************/
     /* this is the maximum value for the ESCs at full power, this value can be increased up to 2000 */
-    #define MAXTHROTTLE 1850
+    //#define MAXTHROTTLE 1850
+    #define MAXTHROTTLE 2000
 
   /****************************    Mincommand          *******************************/
     /* this is the value for the ESCs when they are not armed
@@ -122,11 +123,11 @@
       //#define MONGOOSE1_0     // mongoose 1.0    http://store.ckdevices.com/
       //#define CRIUS_LITE      // Crius MultiWii Lite
       //#define CRIUS_SE        // Crius MultiWii SE
-      //#define CRIUS_SE_v2_0   // Crius MultiWii SE 2.0 with MPU6050, HMC5883 and BMP085
+       #define CRIUS_SE_v2_0   // Crius MultiWii SE 2.0 with MPU6050, HMC5883 and BMP085
       //#define OPENLRSv2MULTI  // OpenLRS v2 Multi Rc Receiver board including ITG3205 and ADXL345
       //#define BOARD_PROTO_1   // with MPU6050 + HMC5883L + MS baro
       //#define BOARD_PROTO_2   // with MPU6050 + slave  MAG3110 + MS baro
-      #define GY_80           // Chinese 10 DOF with  L3G4200D ADXL345 HMC5883L BMP085, LLC
+      //#define GY_80           // Chinese 10 DOF with  L3G4200D ADXL345 HMC5883L BMP085, LLC
       //#define GY_85           // Chinese 9 DOF with  ITG3205 ADXL345 HMC5883L LLC
       //#define GY_86           // Chinese 10 DOF with  MPU6050 HMC5883L MS5611, LLC
       //#define GY_521          // Chinese 6  DOF with  MPU6050, LLC
@@ -385,7 +386,7 @@
     /*********************************    Aux 2 Pin     ***********************************/
       /* possibility to use PIN8 or PIN12 as the AUX2 RC input (only one, not both)
          it deactivates in this case the POWER PIN (pin 12) or the BUZZER PIN (pin 8) */
-      //#define RCAUXPIN8
+      #define RCAUXPIN8
       //#define RCAUXPIN12
 
 
@@ -501,7 +502,7 @@
       //#define MPU6050_LPF_256HZ     // This is the default setting, no need to uncomment, just for reference
       //#define MPU6050_LPF_188HZ
       //#define MPU6050_LPF_98HZ
-      //#define MPU6050_LPF_42HZ
+      #define MPU6050_LPF_42HZ
       //#define MPU6050_LPF_20HZ
       //#define MPU6050_LPF_10HZ
       //#define MPU6050_LPF_5HZ       // Use this only in extreme cases, rather change motors and/or props
@@ -622,7 +623,7 @@
 
     /* introduce a deadband around the stick center
        Must be greater than zero, comment if you dont want a deadband on roll, pitch and yaw */
-    //#define DEADBAND 6
+    #define DEADBAND 6
 
   /**************************************************************************************/
   /***********************                  GPS                **************************/
@@ -907,7 +908,7 @@
   /**************************************************************************************/
     /* motors will not spin when the throttle command is in low position
        this is an alternative method to stop immediately the motors */
-    //#define MOTOR_STOP
+    #define MOTOR_STOP
 
     /* some radios have not a neutral point centered on 1500. can be changed here */
     #define MIDRC 1500

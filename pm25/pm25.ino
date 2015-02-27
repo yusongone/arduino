@@ -28,11 +28,10 @@ void loop(){
   //float new_value=c/1024*5*0.5*1000;
 
   value=value+c;
-  if(count==50){
+  if(count==60){
     //.println(finaly);
-    Serial.print("{");
   Serial.print(value/count/1024*4.6*0.35*500);
-  Serial.print("}");
+  Serial.print(",");
      display.clearDisplay();
   display.setCursor(0,0);
     display.setTextSize(1);
@@ -65,5 +64,5 @@ void loop(){
   value=0;
   }
   count++;
-  delay(50);
+  delay(1000);
 }

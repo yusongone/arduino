@@ -15,7 +15,7 @@ void setup(){
   digitalWrite(9,HIGH);
    pinMode(10,OUTPUT);
   digitalWrite(10,LOW);
-  Serial.begin(9600);
+  Serial.begin(115200);
   display.begin();
   display.setContrast(50);
   
@@ -25,11 +25,14 @@ void setup(){
 
 void loop(){
    float c=analogRead(4);
-  float new_value=c/1024*5*0.5*1000;
-  
-  value=value+new_value;
+  //float new_value=c/1024*5*0.5*1000;
+
+  value=value+c;
   if(count==50){
     //.println(finaly);
+    Serial.print("{");
+  Serial.print(value/count/1024*4.6*0.35*500);
+  Serial.print("}");
      display.clearDisplay();
   display.setCursor(0,0);
     display.setTextSize(1);
@@ -62,5 +65,5 @@ void loop(){
   value=0;
   }
   count++;
-  delay(100);
+  delay(50);
 }

@@ -8,7 +8,7 @@ var serialPort = new SerialPort("/dev/tty.song-DevB", {
 });
 
 var fs = require('fs');
-var stream = fs.createWriteStream("my_file.txt");
+var stream = fs.createWriteStream("my_file2.txt");
 stream.once('open', function(fd) {
   serialPort.open(function () {
     var _headString="";
@@ -17,6 +17,7 @@ stream.once('open', function(fd) {
     var datalength;
     serialPort.on('data', function(data) {
       var s=data.toString();
+      console.log(s);
         stream.write(s);
       //    stream.end();
       });

@@ -2,9 +2,10 @@
 var SerialPort = require("serialport").SerialPort
 
 //var serialPort = new SerialPort("/dev/tty.song-DevB", {
-var serialPort = new SerialPort("/dev/tty.usbmodem1421", {
-//var serialPort = new SerialPort("/dev/tty.usbmodem1411", {
-    baudrate:115200
+//var serialPort = new SerialPort("/dev/tty.usbmodem1421", {
+var serialPort = new SerialPort("/dev/tty.usbmodem1411", {
+   // baudrate:115200
+    baudrate:9600
 });
 
 
@@ -26,23 +27,15 @@ var serialPort = new SerialPort("/dev/tty.usbmodem1421", {
       });
       return;
       */
-    var buf=new Buffer(22);  
+    var buf=new Buffer(6);  
       buf.fill(0);
       buf.writeInt8("$".charCodeAt(0),0);
-      buf.writeInt8("M".charCodeAt(0),1);
-      buf.writeInt8(">".charCodeAt(0),2);
-      buf.writeInt8(16,3);//data length
-      buf.writeUInt8(200,4);//msgId
-      buf.writeUInt16LE(230,5);//R
-      buf.writeUInt16LE(900,7);//PI
-      buf.writeUInt16LE(230,9);//R
-      buf.writeUInt16LE(1900,11);//PI
-      buf.writeUInt16LE(230,13);//R
-      buf.writeUInt16LE(900,15);//PI
-      buf.writeUInt16LE(230,17);//R
-      buf.writeUInt16LE(900,19);//PI
+      buf.writeInt8("B".charCodeAt(0),1);
+      buf.writeInt8("<".charCodeAt(0),2);
+      buf.writeUInt8(0,3);//data length
+      buf.writeUInt8(201,4);//data length
       var z=checksum(buf);
-      buf.writeUInt8(z,21);//61
+      buf.writeUInt8(z,5);//61
       port.write(buf,function(err,res){
         console.log(res);
       });
@@ -59,13 +52,14 @@ var serialPort = new SerialPort("/dev/tty.usbmodem1421", {
         }
       };
   };
+
 serialPort.open(function () {
   var _headString="";
   var buf;
   var count=0;
   var datalength;
   serialPort.on('data', function(data) {
-    console.log(data);
+    console.log("fff",data);
     for(var i=0;i<data.length;i++){
       if(count==1){
           datalength=data[i];

@@ -8,7 +8,7 @@ unsigned int readUT();
 long readUP();
 int readIntRegister(unsigned char address,unsigned char r);
 int getTemperature();
-int getPressure();
+long getPressure();
 void initGy80();
 void getADXData(int* data);
 void getL3GData(int* data);

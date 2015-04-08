@@ -7,7 +7,7 @@
 void setup(){
  
   Serial.begin(9600);
-  initGy80();
+//  initGy80();
 }
 
 void loop(){
@@ -21,10 +21,11 @@ void loop(){
   int HMC_data[3];
   getBMPData(HMC_data);
 */
-int c=getPressure();
+
+long c=getPressure();
   Serial.print("------------");
   Serial.println(c);
 
-  delay(1000);
+  delay(2000);
 }
 

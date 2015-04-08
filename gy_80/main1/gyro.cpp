@@ -68,61 +68,65 @@ void initGy80(){
 
 
 
-static struct{ 
-  int16_t  ac1, ac2, ac3;
-  uint16_t ac4, ac5, ac6;
-  int16_t  b1, b2, mb, mc, md;
-  union {uint16_t val; uint8_t raw[2]; } ut; //uncompensated T
-  union {uint32_t val; uint8_t raw[4]; } up; //uncompensated P
-  uint8_t  state;
-  uint32_t deadline;
-}BMP085;
 
-
+long x1, x2, x3, b3,b5,  b6, p,ut,up;
+uint32_t b7,b4;
 int getTemperature(){
  //calculate true temperature
-  int  ut= readUT();
-  long x1,x2,b5;
+  int32_t  ut= readUT();
   uint16_t ac5=readIntRegister(BMPaddress,0xB2);
   uint16_t ac6=readIntRegister(BMPaddress,0xB4);
   int16_t md= readIntRegister(BMPaddress,0xBE);
   int16_t mc = readIntRegister(BMPaddress,0xBC);
+
+/*
   x1 = ((long)ut - ac6) * ac5 >> 15;
   x2 = ((long) mc << 11) / (x1 + md);
+*/
+  x1 = (ut - (int32_t)ac6) * ((int32_t)ac5) >> 15;
+  x2 = ((int32_t)mc << 11) / (x1+(int32_t)md);
   b5 = x1 + x2;
   return (b5 + 8) >> 4;
 }
 
-int getPressure(){
-  long up= readUP();
-  long x1, x2, x3, b3, b5, b6, p;
-  unsigned long b4, b7;
+long getPressure(){
+  getTemperature();
+  up= readUP();
+  Serial.print("**up");
+  Serial.println(up);
 
-  int ac1 = readIntRegister(BMPaddress,0xAA);
-  int ac2 = readIntRegister(BMPaddress,0xAC);
-  int ac3 = readIntRegister(BMPaddress,0xAE);
+  int16_t ac1 = readIntRegister(BMPaddress,0xAA);
+  int16_t ac2 = readIntRegister(BMPaddress,0xAC);
+  int16_t ac3 = readIntRegister(BMPaddress,0xAE);
+  uint16_t ac4 = readIntRegister(BMPaddress,0xB0);
 
-  unsigned int ac4 = readIntRegister(BMPaddress,0xB0);
-  int b1 = readIntRegister(BMPaddress,0xB6);
-  int b2 = readIntRegister(BMPaddress,0xB8);
+  int16_t b1 = readIntRegister(BMPaddress,0xB6);
+  int16_t b2 = readIntRegister(BMPaddress,0xB8);
 
   b6 = b5 - 4000;
-  x1 = (b2 * (b6 * b6 >> 12)) >> 11; 
-  x2 = ac2 * b6 >> 11;
+
+  x1 = ((int32_t)b2 * ( (b6 * b6)>>12 )) >> 11;
+  x2 = ((int32_t)ac2 * b6) >> 11;
   x3 = x1 + x2;
-  b3 = (((int32_t) ac1 * 4 + x3)<<oversampling_setting + 2) >> 2;
+  b3 = ((((int32_t)ac1*4 + x3) << oversampling_setting) + 2) / 4;
+
   x1 = ac3 * b6 >> 13;
   x2 = (b1 * (b6 * b6 >> 12)) >> 16;
   x3 = ((x1 + x2) + 2) >> 2;
-  b4 = (ac4 * (uint32_t) (x3 + 32768)) >> 15;
-  b7 = ((uint32_t) up - b3) * (50000 >> oversampling_setting);
+  b4 = ((uint32_t)ac4 * (uint32_t)(x3 + 32768)) >> 15;
+
+  b7 = ((uint32_t)up - b3) * (uint32_t)( 50000UL >> oversampling_setting);
+
   p = b7 < 0x80000000 ? (b7 * 2) / b4 : (b7 / b4) * 2;
 
   x1 = (p >> 8) * (p >> 8);
   x1 = (x1 * 3038) >> 16;
   x2 = (-7357 * p) >> 16;
-  return p + ((x1 + x2 + 3791) >> 4);
+
+  p = p + ((x1 + x2 + (int32_t)3791)>>4);
+  return p;
 }
+
 
 unsigned int readUT() {
   writeRegd(BMPaddress,0xf4,0x2e);
@@ -146,7 +150,11 @@ long readUP() {
   lsb |= Wire.read();
   while(!Wire.available()); // wait until data available
   xlsb |= Wire.read();
-  return (((long)msb<<16) | ((long)lsb<<8) | ((long)xlsb)) >>(8-oversampling_setting);
+  long final=(((long)msb<<16) | ((long)lsb<<8) | ((long)xlsb));
+  Serial.print("msb=");
+  Serial.print(final);
+  final>>=(8-oversampling_setting);
+  return final;
 }
 
 void writeRegd(byte address,byte reg,byte value){

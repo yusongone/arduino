@@ -4,8 +4,9 @@ var SerialPort = require("serialport").SerialPort
 //var serialPort = new SerialPort("/dev/tty.song-DevB", {
 //var serialPort = new SerialPort("/dev/tty.usbmodem1421", {
 var serialPort = new SerialPort("/dev/tty.usbmodem1411", {
-   // baudrate:115200
-    baudrate:9600
+//var serialPort = new SerialPort("/dev/tty.usbserial-A7026DQB", {
+    baudrate:115200
+   // baudrate:9600
 });
 
 
@@ -34,12 +35,12 @@ var serialPort = new SerialPort("/dev/tty.usbmodem1411", {
       buf.writeUInt8("<".charCodeAt(0),2);
       buf.writeUInt8(0,3);//data length
       buf.writeUInt8(a,4);//data length
-      var z=checksum(buf);
+      var z=getSum(buf);
       buf.writeUInt8(z,5);//61
       port.write(buf,function(err,res){
         console.log(res);
       });
-      function checksum(buffer) {
+      function getSum(buffer) {
         var data = Array.prototype.slice.call(buffer, 3);
         if(data[0] === 0) {
           // out message
@@ -54,47 +55,77 @@ var serialPort = new SerialPort("/dev/tty.usbmodem1411", {
   };
 
 serialPort.open(function () {
-  var _headString="";
-  var buf;
-  var count=0;
-  var datalength;
+  var headString="";
+  var buf=new Buffer(100);
+  var datalength=0;
+  var subIndex=0;
+  var tartData=0;
+  var startData=0;
   serialPort.on('data', function(data) {
-    for(var i=0;i<data.length;i++){
-      console.log(data[i]);
-    }
+    var bytes=data;
+    var str="";
+   for(var i=0;i<bytes.length;i++){
+     var dd=bytes[i];
+      str+=String.fromCharCode(dd)
+   }
+        console.log(str);
     return;
-    for(var i=0;i<data.length;i++){
-      if(count==1){
-          datalength=data[i];
-          buf=new Buffer(datalength+2);
-       }
-      if(count>0){
-        buf[count-1]=data[i];
-        count++;
-      };
-      if(datalength==0){
-      }else if(datalength&&(datalength+2)==count){
-        console.log(buf);
-        console.log(buf[1]);
-        count=0;
-        datalength=null;
-      }
-      if(data[i]==0x24||data[i]==0x4d||data[i]==0x3e||data[i]==0x3c){
-        _headString+=String.fromCharCode(data[i]).toString();
-        if(_headString=="$M>"){
-          console.log("fefe");
-          count=1;
-          _headString="";
+   for(var i=0;i<bytes.length;i++){
+        var tempByte=bytes[i];
+        if(startData==1){//get dataLength;
+            buf[subIndex++]=tempByte;
+            dataLength=tempByte;
+            startData++;
+        }else if(startData==2){//get msgId
+            buf[subIndex++]=tempByte;
+            startData++;
+        }else if(startData>2){
+            if(dataLength==0){
+                buf[subIndex++]=tempByte;
+                if(checkSum(buf)){
+                    switchCMD(buf);
+                };
+                startData=0;
+                subIndex=0;
+            }else{
+                buf[subIndex++]=tempByte;
+                dataLength--;
+            }
+        }else if(tempByte==36||tempByte==66||tempByte=='>'||tempByte==60){
+            headString+= String.fromCharCode(tempByte);
+            if(headString=="$B>"||headString=="$B<"){
+                startData=1;
+                headString="";
+            }
+        }else{
+            headString="";
         }
-      }else{
-        _headString="";
-      }
     }
-
-//    decode(data);
   });
   //send();
+  function checkSum(buf){
+    var c=buf[0];//datalength;
+    for(var i=1;i<=subIndex-2;i++){
+        c=(c^(buf[i]&0xff));
+    };
+    if(c==buf[subIndex-1]){
+        return true;
+    }
+    return false;
+  }
 
 });
 exports.send=send;
-
+function switchCMD(buf){
+  var dataLength=buf[0];
+  var msId=buf[1];
+  switch(msId){
+    case 205:
+      console.log("a",(buf[2]&0xff)<<0|(buf[3]&0xff)<<8);
+      console.log("b",(buf[4]&0xff)<<0|(buf[5]&0xff)<<8|(buf[6]&0xff)<<16);
+      console.log("c",(buf[7]&0xff)<<0|(buf[8]&0xff)<<8);
+      console.log("d",(buf[9]&0xff)<<0|(buf[10]&0xff)<<8);
+      console.log("e",(buf[11]&0xff)<<0);
+      break;
+  }
+}

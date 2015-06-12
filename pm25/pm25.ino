@@ -3,7 +3,8 @@
 #include "dht.h"
 
 dht DHT;
-Adafruit_PCD8544 display= Adafruit_PCD8544(7,6,5,4,3);
+
+Adafruit_PCD8544 display= Adafruit_PCD8544(6,5,4,3,2);//SCLK,DIN,DC,CS,RST
 float value=0;
 int count=0;
 
@@ -12,7 +13,7 @@ void setup(){
   pinMode(8,OUTPUT);
   digitalWrite(8,HIGH);
    pinMode(9,OUTPUT);
-  digitalWrite(9,HIGH);
+  digitalWrite(9,LOW);
    pinMode(10,OUTPUT);
   digitalWrite(10,LOW);
   Serial.begin(115200);
@@ -24,6 +25,10 @@ void setup(){
 }
 
 void loop(){
+  display.setCursor(0,0);
+    display.setTextSize(1);
+    display.print("PM2.5: ");
+  /*
    float c=analogRead(4);
   //float new_value=c/1024*5*0.5*1000;
 
@@ -65,4 +70,5 @@ void loop(){
   }
   count++;
   delay(1000);
+  */
 }
